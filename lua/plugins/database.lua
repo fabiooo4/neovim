@@ -11,7 +11,14 @@ return {
     'DBUIFindBuffer',
   },
   init = function()
-    -- Your DBUI configuration
     vim.g.db_ui_use_nerd_fonts = 1
+
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = { 'sql', 'dbui' },
+      callback = function()
+        local opts = { noremap = true, silent = true }
+        vim.api.nvim_buf_set_keymap(0, 'n', '<leader>d', ':DBUIToggle<CR>', opts)
+      end,
+    })
   end,
 }
