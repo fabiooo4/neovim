@@ -21,7 +21,7 @@ return {
 				"cssls",
 				"jsonls",
 				"cssls",
-        "marksman",
+				"marksman",
 				"glsl_analyzer",
 				"svelte",
 				"tailwindcss",
@@ -30,13 +30,14 @@ return {
 				"jedi_language_server",
 				"matlab_ls",
 				"nil_ls",
+				"jdtls",
 			}
 
-      -- If on nixos ensure_installed should be empty
-      -- lsp are installed via nix
-      if vim.fn.executable("nixos-rebuild") == 1 then
-        ensure_installed = {}
-      end
+			-- If on nixos ensure_installed should be empty
+			-- lsp are installed via nix
+			if vim.fn.executable("nixos-rebuild") == 1 then
+				ensure_installed = {}
+			end
 
 			require("mason-lspconfig").setup({
 				ensure_installed = ensure_installed,
@@ -59,10 +60,20 @@ return {
 		},
 		config = true,
 	},
-	--[[ {
-    -- Java custom lsp
-    "nvim-java/nvim-java",
-  }, ]]
+	{
+		-- Java custom lsp
+		"nvim-java/nvim-java",
+	},
+	{
+		-- ANTLR4 custom lsp
+		"dylon/vim-antlr",
+		config = function()
+			vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+				pattern = "*.g4",
+				command = "set filetype=antlr4",
+			})
+		end,
+	},
 	{
 		"neovim/nvim-lspconfig",
 		opts = {
@@ -75,16 +86,16 @@ return {
 		lazy = false,
 		priority = 51,
 		config = function()
-			--[[ require("java").setup({
-        -- load java debugger plugins
-        java_debug_adapter = {
-          enable = true,
-        },
-        notifications = {
-          -- disable 'Configuring DAP' & 'DAP configured' messages on start up
-          dap = false,
-        },
-      }) ]]
+			require("java").setup({
+				-- load java debugger plugins
+				java_debug_adapter = {
+					enable = true,
+				},
+				notifications = {
+					-- disable 'Configuring DAP' & 'DAP configured' messages on start up
+					dap = false,
+				},
+			})
 
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -261,6 +272,17 @@ return {
 					end,
 				},
 			}
+
+      -- Java seup
+			vim.lsp.config("jdtls", {
+				on_attach = on_attach,
+				capabilities = capabilities,
+				flags = {
+					debounce_text_changes = 150,
+				},
+        root_markers = { "pom.xml", "build.gradle", "mvnw", "gradlew" },
+			})
+			vim.lsp.enable("jdtls")
 
 			-- Check if the ESP-IDF environment variable is set
 			local esp_idf_path = os.getenv("IDF_PATH")
