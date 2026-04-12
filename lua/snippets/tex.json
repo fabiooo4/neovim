@@ -113,6 +113,14 @@
       "autotrigger": true
     }
   },
+  "ttt": {
+    "prefix": "ttt",
+    "description": "\\texttt",
+    "body": "\\texttt{$1\\}$0",
+    "luasnip": {
+      "autotrigger": true
+    }
+  },
   "sympy": {
     "prefix": "sympy",
     "description": "sympyblock ",
