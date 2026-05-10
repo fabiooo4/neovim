@@ -31,6 +31,7 @@ return {
 				"matlab_ls",
 				"nil_ls",
 				"jdtls",
+        "basedpyright"
 			}
 
 			-- If on nixos ensure_installed should be empty
