@@ -29,6 +29,7 @@ return {
 				"nil_ls",
 				"jdtls",
 				"basedpyright",
+				"tinymist",
 			}
 
 			-- If on nixos ensure_installed should be empty
@@ -141,6 +142,37 @@ return {
 				})
 				vim.lsp.enable(lsp)
 			end
+
+			-- Typst -----------
+			vim.lsp.config("tinymist", {
+				cmd = { "tinymist" },
+				filetypes = { "typst" },
+
+				on_attach = on_attach,
+				capabilities = capabilities,
+				flags = {
+					debounce_text_changes = 50,
+				},
+				settings = {
+					formatterMode = "typstyle",
+					exportPdf = "onType",
+					semanticTokens = "disable",
+					formatterPrintWidth = 80, -- limit line length to 80 if possible
+					syntaxOnly = "onPowerSaving",
+				},
+			})
+			vim.lsp.enable("tinymist")
+
+			vim.api.nvim_create_user_command("TypstPdf", function()
+				local filepath = vim.api.nvim_buf_get_name(0)
+
+				if filepath:match("%.typ$") then
+					local pdf_path = filepath:gsub("%.typ$", ".pdf")
+					vim.ui.open(pdf_path)
+				end
+			end, {})
+
+			-- Typst -----------
 
 			if
 				vim.fn.executable("nixd") == 1
@@ -285,10 +317,10 @@ return {
 			local esp_idf_path = os.getenv("IDF_PATH")
 			local home = os.getenv("HOME")
 			if esp_idf_path then
-        local command = home .. "/.espressif/tools/esp-clang/esp-18.1.2_20240912/esp-clang/bin/clangd"
-        if vim.fn.executable("nixos-rebuild") == 1 then
-          command = "clangd"
-        end
+				local command = home .. "/.espressif/tools/esp-clang/esp-18.1.2_20240912/esp-clang/bin/clangd"
+				if vim.fn.executable("nixos-rebuild") == 1 then
+					command = "clangd"
+				end
 
 				-- for esp-idf
 				vim.lsp.config("clangd", {
@@ -298,7 +330,7 @@ return {
 					on_attach = on_attach,
 					capabilities = capabilities,
 					cmd = {
-            command,
+						command,
 						"--background-index",
 						"--query-driver=**",
 					},
