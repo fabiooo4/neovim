@@ -157,8 +157,13 @@ return {
 					formatterMode = "typstyle",
 					exportPdf = "onType",
 					semanticTokens = "disable",
-					formatterPrintWidth = 80, -- limit line length to 80 if possible
+					formatterPrintWidth = 88, -- limit line length to 80 if possible
+					formatterProseWrap = "fill", -- wrap prose to fit within the configured print width.
 					syntaxOnly = "onPowerSaving",
+					-- This searches upwards from the current file to find the folder containing
+					-- `.git` or `typst.toml`
+					root_dir = vim.fs.root(0, { ".git" }),
+					-- root_dir = vim.fn.getcwd(),
 				},
 			})
 			vim.lsp.enable("tinymist")

@@ -47,6 +47,11 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
+	pattern = "typst",
+	command = [[ setlocal colorcolumn=88 ]],
+})
+
+vim.api.nvim_create_autocmd("FileType", {
 	pattern = "markdown",
 	command = [[ setlocal colorcolumn=88 ]],
 })
