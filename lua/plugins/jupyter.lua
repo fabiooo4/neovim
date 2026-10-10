@@ -47,7 +47,7 @@ return {
 					kernel_shutdown = "<leader>kS", -- shutdown kernel
 					kernel_info = "<leader>kn", -- show kernel info
 					-- Inspector (both Notebook mode and Cell mode)
-					variable_inspect = "<leader>kh", -- inspect variable at cursor
+					variable_inspect = "<leader>K", -- inspect variable at cursor
 					cell_variables = "<leader>kv", -- show all variables in cell
 					toggle_auto_hover = "<leader>kH", -- toggle auto-hover on CursorHold
 					-- Note: i, a, I, A, o, O, <CR> enter Cell mode; <Esc> exits Cell mode
