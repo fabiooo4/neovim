@@ -13,30 +13,33 @@ return {
 			"gitcommit",
 			"git_rebase",
 			"diff",
+			"python",
+			"markdown",
+			"markdown_inline",
 		})
 
 		vim.api.nvim_create_autocmd("FileType", {
 			callback = function(ev)
-				local lang = vim.treesitter.language.get_lang(ev.match)
+				local lang = vim.treesitter.language.get_lang(ev.match) or ev.match
+
+				-- Only query nvim-treesitter registry for auto-installing upstream parsers
 				local available_langs = require("nvim-treesitter").get_available()
-				local is_available = vim.tbl_contains(available_langs, lang)
-				if is_available then
+				if vim.tbl_contains(available_langs, lang) then
 					local installed_langs = require("nvim-treesitter").get_installed()
-					local installed = vim.tbl_contains(installed_langs, lang)
-					if not installed then
+					if not vim.tbl_contains(installed_langs, lang) then
 						require("nvim-treesitter").install(lang):wait()
 					end
-
-					-- Highlights
-					vim.treesitter.start()
-
-					-- Folds
-					vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
-					vim.wo[0][0].foldmethod = "expr"
-
-					-- Indentation
-					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 				end
+
+				-- Start highlighting for all filetypes with a valid parser
+				pcall(vim.treesitter.start, ev.buf)
+
+				-- Folds
+				vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+				vim.wo[0][0].foldmethod = "expr"
+
+				-- Indentation
+				vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 			end,
 		})
 	end,

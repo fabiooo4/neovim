@@ -28,8 +28,11 @@ return {
 				"eslint",
 				"nil_ls",
 				"jdtls",
-				"basedpyright",
 				"tinymist",
+
+				-- Python
+				"basedpyright",
+				"ruff",
 			}
 
 			-- If on nixos ensure_installed should be empty
@@ -129,7 +132,6 @@ return {
 				"tailwindcss",
 				"ts_ls",
 				"eslint",
-				"basedpyright",
 			}
 
 			for _, lsp in ipairs(servers) do
@@ -178,6 +180,38 @@ return {
 			end, {})
 
 			-- Typst -----------
+
+			-- Python ----------
+			-- (Type checking, completions, hover)
+			vim.lsp.config("basedpyright", {
+				on_attach = on_attach,
+				capabilities = capabilities,
+				flags = { debounce_text_changes = 150 },
+				settings = {
+					basedpyright = {
+						analysis = {
+							-- You can change this to "basic" or "strict" depending on your preference
+							typeCheckingMode = "standard",
+
+							-- Let ruff handle imports
+							disableOrganizeImports = true,
+						},
+					},
+				},
+			})
+			vim.lsp.enable("basedpyright")
+
+			-- (Linting, formatting, organizing imports)
+			vim.lsp.config("ruff", {
+				on_attach = function(client, bufnr)
+					on_attach(client, bufnr)
+					-- Disable ruff's hover provider in favor of basedpyright's richer hover docs
+					client.server_capabilities.hoverProvider = false
+				end,
+				capabilities = capabilities,
+			})
+			vim.lsp.enable("ruff")
+			-- Python ----------
 
 			if
 				vim.fn.executable("nixd") == 1
