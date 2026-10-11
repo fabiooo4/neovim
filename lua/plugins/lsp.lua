@@ -195,6 +195,10 @@ return {
 
 							-- Let ruff handle imports
 							disableOrganizeImports = true,
+
+							diagnosticSeverityOverrides = {
+								reportPrivateImportUsage = "none",
+							},
 						},
 					},
 				},
